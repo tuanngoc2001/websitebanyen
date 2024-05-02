@@ -2,6 +2,7 @@ package com.example.websitebanyen.controller;
 
 import com.example.websitebanyen.dto.CategoryDto;
 import com.example.websitebanyen.dto.ProductDto;
+import com.example.websitebanyen.dto.ProductParam;
 import com.example.websitebanyen.model.Category;
 import com.example.websitebanyen.model.Product;
 import com.example.websitebanyen.service.CategoryService;
@@ -37,12 +38,17 @@ public class ProductController {
      * get all product
      */
     @GetMapping
-    public ResponseEntity<Iterable<Product>> findAll()
+    public ResponseEntity<List<ProductDto>> findAll()
     {
         List<Product> products=productService.findAll();
         if(products.isEmpty())
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        List<ProductDto> result = new ArrayList<>();
+        for (Product pro:products
+             ) {
+            result.add(this.toDto(pro));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     /**
@@ -51,22 +57,22 @@ public class ProductController {
      * @return
      */
     @GetMapping("/search-by-id")
-    public ResponseEntity<Product> findAllById(@RequestParam int id) {
+    public ResponseEntity<ProductDto> findAllById(@RequestParam int id) {
         Optional<Product> product=productService.findById(id);
         if(!product.isPresent())
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(product.get(), HttpStatus.OK);
+        return new ResponseEntity<>(this.toDto(product.get()), HttpStatus.OK);
     }
 
     /**
      * tìm kiểm theo loại sản phẩm
      */
     @GetMapping("/search-by-cateId")
-    public ResponseEntity<Product> findAllByCateId(@RequestParam int id) {
+    public ResponseEntity<ProductDto> findAllByCateId(@RequestParam int id) {
         Product product=productService.findAllByCategoryId(id);
         if(product==null)
             return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return new ResponseEntity<>(this.toDto(product), HttpStatus.OK);
     }
 
     /**
@@ -74,46 +80,66 @@ public class ProductController {
      */
 
     @GetMapping("/price-decrease")
-    public ResponseEntity<Iterable<Product>>findAllByPriceDecrease()
+    public ResponseEntity<List<ProductDto>>findAllByPriceDecrease()
     {
         Iterable<Product> products=productService.findAllByPriceDecrease();
         if(products==null)
-            return new ResponseEntity<>(products, HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+            return new ResponseEntity<>( HttpStatus.NOT_FOUND);
+        List<ProductDto> result = new ArrayList<>();
+        for (Product pro:products
+        ) {
+            result.add(this.toDto(pro));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/price-increase")
-    public ResponseEntity<Iterable<Product>>findAllByPriceIncrease()
+    public ResponseEntity<List<ProductDto>>findAllByPriceIncrease()
     {
         Iterable<Product> products=productService.findAllByPriceIncrease();
         if(products==null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        List<ProductDto> result = new ArrayList<>();
+        for (Product pro:products
+        ) {
+            result.add(this.toDto(pro));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @GetMapping("/sort-date")
-    public ResponseEntity<List<Product>>findAllByDateNew()
+    public ResponseEntity<List<ProductDto>>findAllByDateNew()
     {
         List<Product> products=productService.findAllByDateNew();
         if(products==null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        List<ProductDto> result = new ArrayList<>();
+        for (Product pro:products
+        ) {
+            result.add(this.toDto(pro));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     //find by name
     @GetMapping("/search-by-name")
-    public ResponseEntity<List<Product>>findAllByName(@RequestParam String name)
+    public ResponseEntity<List<ProductDto>>findAllByName(@RequestParam String name)
     {
         List<Product> products=productService.findAllByName(name);
         if(products==null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        List<ProductDto> result = new ArrayList<>();
+        for (Product pro:products
+        ) {
+            result.add(this.toDto(pro));
+        }
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 
     //cập nhật và thêm sản phẩm
     @PutMapping("/update-product")
-    public ResponseEntity addProductTest(@ModelAttribute ProductDto dto)
+    public ResponseEntity addProductTest(@ModelAttribute ProductParam dto)
     {
         try{
             Optional<Product> proOld = productService.findById(dto.getId());

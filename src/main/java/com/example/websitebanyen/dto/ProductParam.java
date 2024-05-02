@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductDto {
+public class ProductParam {
     private int id;
     private float price;
     private int number;
@@ -24,4 +24,16 @@ public class ProductDto {
     private int sold;
     private float sale;
     private CategoryDto category;
+    private List<MultipartFile> file = new ArrayList<>();
+    public ProductParam(int id, float price, int number, String description, String title, Date date, int sold, float sale, CategoryDto category) {
+        this.id = id;
+        this.price = price;
+        this.number = number;
+        this.description = description;
+        this.title = title;
+        this.date = date;
+        this.sold = sold;
+        this.sale = sale;
+        this.category = category;
+    }
 }
