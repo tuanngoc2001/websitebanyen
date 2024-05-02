@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @CrossOrigin("*")
-@RequestMapping("/receipt")
+@RequestMapping("/api/v1/receipt")
 public class ReceiptController {
     @Autowired
     private ReceiptService receiptService;

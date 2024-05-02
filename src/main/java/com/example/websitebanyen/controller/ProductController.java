@@ -1,23 +1,38 @@
 package com.example.websitebanyen.controller;
 
+import com.example.websitebanyen.dto.CategoryDto;
+import com.example.websitebanyen.dto.ProductDto;
+import com.example.websitebanyen.model.Category;
 import com.example.websitebanyen.model.Product;
+import com.example.websitebanyen.service.CategoryService;
+import com.example.websitebanyen.service.ImageService;
 import com.example.websitebanyen.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 
 @Controller
 @CrossOrigin("*")
-@RequestMapping("/product")
+@RequestMapping("/api/v1/product")
 public class ProductController {
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private ImageService imageService;
+
+    @Autowired
+    private CategoryService categoryService;
     /**
      * get all product
      */
@@ -95,15 +110,40 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    //admin
-    //thêm sản phẩm
-    @PostMapping("/add-product")
-    public void addProduct(@RequestParam Product product)
+
+    //cập nhật và thêm sản phẩm
+    @PutMapping("/update-product")
+    public ResponseEntity addProductTest(@ModelAttribute ProductDto dto)
     {
-        productService.save(product);
+        try{
+            Optional<Product> proOld = productService.findById(dto.getId());
+            if(proOld.isPresent()) {
+                Product product = proOld.get();
+                product.setPrice(dto.getPrice());
+                product.setNumber(dto.getNumber());
+                product.setDescription(dto.getDescription());
+                product.setTitle(dto.getTitle());
+                product.setDate(dto.getDate());
+                product.setSold(dto.getSold());
+                product.setSale(dto.getSale());
+                productService.save(product);
+
+            } else {
+                Optional<Category> category = categoryService.findById(dto.getCategory().getId());
+                Product pro = new Product(dto.getPrice(), dto.getNumber(), dto.getDescription(), dto.getTitle(),dto.getDate(), dto.getSold(), dto.getSale());
+                if(category.isPresent()){
+                    pro.setCategory(category.get());
+                }
+                productService.save(pro);
+                Product productNew = productService.findAllByDateNew().get(0);
+                imageService.uploadImage(dto.getFile(), productNew);
+            }
+
+            return new ResponseEntity(HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
     }
-
-
     //xóa sản phẩm
     @PostMapping("/delete-product")
     public void removeProduct(@RequestParam int id)
@@ -111,7 +151,12 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
-
-
-
+    public Product toEntity(ProductDto dto) {
+        return new Product(dto.getPrice(), dto.getNumber(), dto.getDescription(), dto.getTitle(),dto.getDate(), dto.getSold(), dto.getSale());
+    }
+    public ProductDto toDto(Product pro){
+        CategoryDto cateDto = new CategoryDto(pro.getCategory().getId(),pro.getCategory().getName(),pro.getCategory().getStatus());
+        ProductDto dto = new ProductDto(pro.getId(),pro.getPrice(), pro.getNumber(), pro.getDescription(), pro.getTitle(),pro.getDate(), pro.getSold(), pro.getSale(),cateDto);
+        return dto;
+    }
 }

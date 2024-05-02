@@ -1,10 +1,19 @@
 package com.example.websitebanyen.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
 @Table(name = "receiptDetail")
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class ReceiptDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,45 +26,5 @@ public class ReceiptDetail {
     private Product product;
     private int status;
 
-    public ReceiptDetail() {
-    }
 
-    public ReceiptDetail(int id, Receipt receipt, Product product, int status) {
-        this.id = id;
-        this.receipt = receipt;
-        this.product = product;
-        this.status = status;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Receipt getReceipt() {
-        return receipt;
-    }
-
-    public void setReceipt(Receipt receipt) {
-        this.receipt = receipt;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
-        this.product = product;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
 }

@@ -12,6 +12,8 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Integer> {
+
+//    @Query("select new com.example.websitebanyen.dto(u, true) from Product u where u.user.id = ?1")
     List<Product> findAll();
     Product findAllByCategoryId(int id);
 
